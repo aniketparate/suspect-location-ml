@@ -1,0 +1,462 @@
+{
+  "date": "2024-06-12",
+  "day_type": "Wednesday",
+  "hourly": {
+    "00:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "01:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "02:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "03:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "04:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "05:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "06:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.36769805188302407,
+        "home": 0.6323019481169759,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 0.6323019481169759,
+      "expected_coordinates": {
+        "lat": 19.113048,
+        "lon": 72.870215
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "07:00": {
+      "place_distribution": {
+        "cafe": 0.028964699442093022,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.363545520400973,
+        "home": 0.607489780156934,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 0.607489780156934,
+      "expected_coordinates": {
+        "lat": 19.110373,
+        "lon": 72.86987
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "08:00": {
+      "place_distribution": {
+        "cafe": 0.3514508044724883,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.10554194342497243,
+        "home": 0.3603908947152044,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.18261635738733475
+      },
+      "top_place": "home",
+      "top_place_probability": 0.36039089471520447,
+      "expected_coordinates": {
+        "lat": 19.063366,
+        "lon": 72.86327
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "09:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2729124972561208,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7270875027438792
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7270875027438792,
+      "expected_coordinates": {
+        "lat": 19.0438,
+        "lon": 72.859884
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "10:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.26904162767872664,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7309583723212734
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7309583723212734,
+      "expected_coordinates": {
+        "lat": 19.043428,
+        "lon": 72.859832
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "11:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2708100665600959,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7291899334399041
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7291899334399041,
+      "expected_coordinates": {
+        "lat": 19.043598,
+        "lon": 72.859856
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "12:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.27905747263879277,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7209425273612073
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7209425273612073,
+      "expected_coordinates": {
+        "lat": 19.04439,
+        "lon": 72.859967
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "13:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2705832960068812,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7294167039931189
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7294167039931189,
+      "expected_coordinates": {
+        "lat": 19.043576,
+        "lon": 72.859853
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "14:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2711315837374595,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7288684162625406
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7288684162625406,
+      "expected_coordinates": {
+        "lat": 19.043629,
+        "lon": 72.85986
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "15:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2745047423742798,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7254952576257202
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7254952576257202,
+      "expected_coordinates": {
+        "lat": 19.043952,
+        "lon": 72.859906
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "16:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2738873840227418,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7261126159772582
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7261126159772582,
+      "expected_coordinates": {
+        "lat": 19.043893,
+        "lon": 72.859897
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "17:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.27291528799122383,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.7270847120087762
+      },
+      "top_place": "office",
+      "top_place_probability": 0.7270847120087762,
+      "expected_coordinates": {
+        "lat": 19.0438,
+        "lon": 72.859884
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "18:00": {
+      "place_distribution": {
+        "cafe": 0.0067448380890096065,
+        "dhaba": 0.044082274218416866,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.23226288415089646,
+        "local_market": 0.14126707145294395,
+        "mall": 0.0,
+        "office": 0.5756429320887332
+      },
+      "top_place": "office",
+      "top_place_probability": 0.5756429320887332,
+      "expected_coordinates": {
+        "lat": 19.057753,
+        "lon": 72.861261
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "19:00": {
+      "place_distribution": {
+        "cafe": 0.046455753134818326,
+        "dhaba": 0.27197914088887815,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.2529035369947983,
+        "local_market": 0.20254855259939342,
+        "mall": 0.0,
+        "office": 0.22611301638211173
+      },
+      "top_place": "dhaba",
+      "top_place_probability": 0.27197914088887815,
+      "expected_coordinates": {
+        "lat": 19.086896,
+        "lon": 72.864279
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "20:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.42582723298959185,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 0.5599041918462162,
+        "local_market": 0.014268575164192034,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 0.5599041918462162,
+      "expected_coordinates": {
+        "lat": 19.112087,
+        "lon": 72.86766
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "21:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "22:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    },
+    "23:00": {
+      "place_distribution": {
+        "cafe": 0.0,
+        "dhaba": 0.0,
+        "friend_area": 0.0,
+        "gym": 0.0,
+        "home": 1.0,
+        "local_market": 0.0,
+        "mall": 0.0,
+        "office": 0.0
+      },
+      "top_place": "home",
+      "top_place_probability": 1.0,
+      "expected_coordinates": {
+        "lat": 19.1136,
+        "lon": 72.8697
+      },
+      "coordinate_uncertainty_meters": 0.0
+    }
+  }
+}
