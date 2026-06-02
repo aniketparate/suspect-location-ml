@@ -1,4 +1,4 @@
-"""Visualization script for location prediction results."""
+﻿"""Visualization script for location prediction results."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 import folium
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -26,6 +27,12 @@ KNOWN_LOCATIONS: dict[str, tuple[float, float]] = {
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate prediction visualizations.")
     parser.add_argument("--date", type=str, required=True, help="Date in YYYY-MM-DD format.")
+    parser.add_argument(
+        "--lgbm-model",
+        type=Path,
+        default=Path("models") / "lgbm_model.pkl",
+        help="Path to the trained LightGBM model used for weekday/weekend contrast heatmaps.",
+    )
     return parser.parse_args()
 
 
@@ -78,21 +85,48 @@ def build_rf_matrix(prediction: dict) -> tuple[pd.DataFrame, list[str]]:
     return df, labels
 
 
-def make_heatmap(date: str, day_type: str, rf_hourly_df: pd.DataFrame, out_path: Path) -> None:
-    weekend_day = day_type in {"Saturday", "Sunday"}
-    titles = [
-        f"Location Probability Heatmap — {date} (Weekday)",
-        f"Location Probability Heatmap — {date} (Weekend)",
+def build_lgbm_matrix_for_day(date: str, model, is_weekend: bool) -> pd.DataFrame:
+    timestamp = pd.Timestamp(date)
+    day_of_week = int(timestamp.dayofweek)
+    rows = []
+
+    for hour in range(24):
+        rows.append(
+            {
+                "hour_sin": float(np.sin(2 * np.pi * hour / 24.0)),
+                "hour_cos": float(np.cos(2 * np.pi * hour / 24.0)),
+                "dow_sin": float(np.sin(2 * np.pi * day_of_week / 7.0)),
+                "dow_cos": float(np.cos(2 * np.pi * day_of_week / 7.0)),
+                "is_weekend": int(is_weekend),
+            }
+        )
+
+    features = pd.DataFrame(rows)
+    probabilities = np.asarray(model.predict_proba(features), dtype=float)
+    labels = [str(label) for label in model.classes_]
+    return pd.DataFrame(probabilities.T, index=labels, columns=list(range(24))).fillna(0.0).astype(float)
+
+
+def make_heatmap(
+    date: str,
+    actual_hourly_df: pd.DataFrame,
+    contrast_hourly_df: pd.DataFrame,
+    out_path: Path,
+) -> None:
+    actual_is_weekend = pd.Timestamp(date).dayofweek >= 5
+    actual_type = "Weekend" if actual_is_weekend else "Weekday"
+    contrast_type = "Weekday" if actual_is_weekend else "Weekend"
+    panels = [
+        (actual_hourly_df, f"Location Probability Heatmap - {date} [Input day type] {actual_type}"),
+        (contrast_hourly_df, f"Location Probability Heatmap - {date} Contrast view ({contrast_type})"),
     ]
 
     fig, axes = plt.subplots(2, 1, figsize=(14, 10), sharex=True)
     cmap = "YlOrRd"
 
-    # Input JSON contains a single date; reuse the same hourly RF distribution
-    # for both panels and annotate which panel corresponds to the requested date type.
-    for idx, ax in enumerate(axes):
+    for ax, (hourly_df, title) in zip(axes, panels):
         sns.heatmap(
-            rf_hourly_df,
+            hourly_df,
             ax=ax,
             cmap=cmap,
             cbar=True,
@@ -101,10 +135,12 @@ def make_heatmap(date: str, day_type: str, rf_hourly_df: pd.DataFrame, out_path:
             linewidths=0.2,
             linecolor="white",
         )
-        suffix = " [Input day type]" if (idx == 1 and weekend_day) or (idx == 0 and not weekend_day) else ""
-        ax.set_title(titles[idx] + suffix)
+        ax.set_title(title)
         ax.set_xlabel("Hour")
         ax.set_ylabel("Place Label")
+        ax.set_xticks(range(24))
+        ax.set_xticklabels(range(24))
+        ax.tick_params(axis="x", labelbottom=True)
 
     plt.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -129,7 +165,7 @@ def make_stacked_barplot(date: str, rf_hourly_df: pd.DataFrame, out_path: Path) 
     plt.ylim(0, 1.0)
     plt.xlabel("Hour of Day")
     plt.ylabel("Probability")
-    plt.title(f"Hourly Location Probability (RF) — {date}")
+    plt.title(f"Hourly Location Probability (RF) â€” {date}")
     plt.legend(title="Place", bbox_to_anchor=(1.02, 1), loc="upper left")
     plt.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -213,14 +249,17 @@ def main() -> None:
     args = parse_args()
     prediction = load_prediction_json(args.date)
     rf_hourly_df, labels = build_rf_matrix(prediction)
-    day_type = str(prediction.get("day_type", "Unknown"))
+    lgbm_model = joblib.load(args.lgbm_model)
+    actual_is_weekend = pd.Timestamp(args.date).dayofweek >= 5
+    actual_heatmap_df = build_lgbm_matrix_for_day(args.date, lgbm_model, is_weekend=actual_is_weekend)
+    contrast_heatmap_df = build_lgbm_matrix_for_day(args.date, lgbm_model, is_weekend=not actual_is_weekend)
 
     out_dir = Path("outputs") / "predictions"
     heatmap_path = out_dir / f"heatmap_{args.date}.png"
     barplot_path = out_dir / f"barplot_{args.date}.png"
     map_path = out_dir / f"map_{args.date}.html"
 
-    make_heatmap(args.date, day_type, rf_hourly_df, heatmap_path)
+    make_heatmap(args.date, actual_heatmap_df, contrast_heatmap_df, heatmap_path)
     make_stacked_barplot(args.date, rf_hourly_df, barplot_path)
     make_map(args.date, prediction, rf_hourly_df, labels, map_path)
 

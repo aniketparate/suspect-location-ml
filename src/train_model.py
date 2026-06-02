@@ -67,41 +67,52 @@ def print_per_class_f1(y_true: pd.Series, y_pred: np.ndarray, labels: list[str])
         print(f"  {label}: {float(score):.6f}")
 
 
-def build_observations(df: pd.DataFrame) -> np.ndarray:
-    hour_bin = (df["hour"].astype(int) // 2).to_numpy()
-    weekend = df["is_weekend"].astype(int).to_numpy()
-    obs = hour_bin * 2 + weekend
-    return obs.astype(int)
-
-
-def train_hmm_bundle(day_df: pd.DataFrame, label_encoder: LabelEncoder) -> dict[str, object]:
-    from hmmlearn import hmm
-
+def build_hourly_day_sequences(day_df: pd.DataFrame) -> tuple[np.ndarray, list[int], list[str]]:
     if day_df.empty:
         raise ValueError("Cannot train HMM on empty dataset.")
 
-    obs = build_observations(day_df)
-    X = obs.reshape(-1, 1)
-    lengths = [len(X)]
+    work = day_df.copy()
+    work["date"] = work["timestamp"].dt.normalize()
+    hourly = (
+        work.groupby(["date", "hour"], as_index=False)
+        .agg(place_label=(TARGET, lambda s: s.mode().iloc[0]))
+        .sort_values(["date", "hour"])
+    )
+
+    obs_parts: list[np.ndarray] = []
+    label_parts: list[str] = []
+    lengths: list[int] = []
+    for _, group in hourly.groupby("date", sort=True):
+        group = group.sort_values("hour")
+        if len(group) != 24 or set(group["hour"].astype(int)) != set(range(24)):
+            continue
+        obs_parts.append(group["hour"].astype(int).to_numpy().reshape(-1, 1))
+        label_parts.extend(group["place_label"].astype(str).tolist())
+        lengths.append(24)
+
+    if not obs_parts:
+        raise ValueError("No complete 24-hour day sequences available for HMM training.")
+
+    return np.vstack(obs_parts), lengths, label_parts
+
+
+def train_hmm_bundle(day_df: pd.DataFrame, label_encoder: LabelEncoder) -> dict[str, object]:
+    from hmmlearn.hmm import CategoricalHMM
+
+    X, lengths, hourly_labels = build_hourly_day_sequences(day_df)
     n_states = len(label_encoder.classes_)
 
-    model = hmm.MultinomialHMM(n_components=n_states, n_iter=100, random_state=42)
-    try:
-        model.fit(X, lengths=lengths)
-    except Exception:
-        # Compatibility fallback for hmmlearn versions expecting one-hot multinomial input.
-        n_obs = int(obs.max()) + 1
-        X_onehot = np.zeros((len(obs), n_obs), dtype=int)
-        X_onehot[np.arange(len(obs)), obs] = 1
-        model = hmm.MultinomialHMM(n_components=n_states, n_iter=100, random_state=42)
-        model.fit(X_onehot, lengths=lengths)
-        state_seq = model.predict(X_onehot, lengths=lengths)
-    else:
-        state_seq = model.predict(X, lengths=lengths)
+    model = CategoricalHMM(
+        n_components=n_states,
+        n_iter=200,
+        random_state=42,
+    )
+    model.fit(X, lengths=lengths)
+    state_seq = model.predict(X, lengths=lengths)
 
-    y_true = label_encoder.transform(day_df[TARGET].astype(str))
+    y_true = label_encoder.transform(pd.Series(hourly_labels, dtype=str))
     state_to_label: dict[int, str] = {}
-    fallback = str(day_df[TARGET].mode().iloc[0])
+    fallback = str(pd.Series(hourly_labels).mode().iloc[0])
     for state in range(n_states):
         idx = np.where(state_seq == state)[0]
         if len(idx) == 0:
@@ -114,6 +125,7 @@ def train_hmm_bundle(day_df: pd.DataFrame, label_encoder: LabelEncoder) -> dict[
         "model": model,
         "state_to_label": state_to_label,
         "classes": [str(c) for c in label_encoder.classes_],
+        "lengths": lengths,
     }
 
 
@@ -135,6 +147,12 @@ def main() -> None:
     train_df, test_df, cutoff = make_temporal_split(df, args.test_days)
     print(f"Temporal split cutoff: {cutoff}")
     print(f"Train rows: {len(train_df)} | Test rows: {len(test_df)}")
+    y_train = train_df[TARGET].astype(str)
+    y_test = test_df[TARGET].astype(str)
+    print("Test set place_label distribution:")
+    print(y_test.value_counts())
+    print("Train set place_label distribution:")
+    print(y_train.value_counts())
 
     prob_table = build_probability_table(train_df)
     Path(args.prob_table_out).parent.mkdir(parents=True, exist_ok=True)
@@ -147,15 +165,13 @@ def main() -> None:
     X_test = test_df[FEATURES].copy()
     X_train["is_weekend"] = X_train["is_weekend"].astype(int)
     X_test["is_weekend"] = X_test["is_weekend"].astype(int)
-    y_train = train_df[TARGET].astype(str)
-    y_test = test_df[TARGET].astype(str)
 
     lgbm = lgb.LGBMClassifier(
-        n_estimators=500,
-        learning_rate=0.05,
+        n_estimators=1000,
+        learning_rate=0.02,
         max_depth=8,
         num_leaves=63,
-        min_child_samples=20,
+        min_child_samples=5,
         class_weight="balanced",
         random_state=42,
         verbose=-1,

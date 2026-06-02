@@ -102,9 +102,8 @@ def resolve_uncertainty(place_probs: dict[str, float], place_uncertainty: dict[s
 
 
 def make_hmm_observations(day_of_week: int) -> np.ndarray:
-    is_weekend = int(day_of_week >= 5)
-    obs = np.array([(hour // 2) * 2 + is_weekend for hour in range(24)], dtype=int)
-    return obs
+    _ = day_of_week
+    return np.arange(24, dtype=int)
 
 
 def hmm_posteriors(bundle: dict[str, object], day_of_week: int) -> list[dict[str, float]]:
@@ -114,14 +113,7 @@ def hmm_posteriors(bundle: dict[str, object], day_of_week: int) -> list[dict[str
 
     obs = make_hmm_observations(day_of_week)
     X = obs.reshape(-1, 1)
-
-    try:
-        post = model.predict_proba(X)
-    except Exception:
-        n_obs = int(obs.max()) + 1
-        X_onehot = np.zeros((len(obs), n_obs), dtype=int)
-        X_onehot[np.arange(len(obs)), obs] = 1
-        _, post = model.score_samples(X_onehot)
+    post = model.predict_proba(X)
 
     hour_probs: list[dict[str, float]] = []
     n_states = post.shape[1]
@@ -159,7 +151,8 @@ def main() -> None:
 
     hmm_probs_by_hour = hmm_posteriors(hmm_bundle, day_of_week)
     hourly_payload: dict[str, dict[str, object]] = {}
-    rows: list[tuple[str, str, float, str, float, str, float]] = []
+    rows: list[tuple[str, str, float, str, float, str]] = []
+    agreement_counts = {"HIGH": 0, "LOW": 0}
 
     for hour in hours:
         X = build_feature_row(day_of_week, hour)
@@ -183,12 +176,15 @@ def main() -> None:
         lgbm_top, lgbm_p = top_label_and_prob(lgbm_probs)
         hmm_top, hmm_p = top_label_and_prob(hmm_probs)
         table_top, table_p = top_label_and_prob(table_probs)
+        agreement = "HIGH" if lgbm_top == table_top else "LOW"
+        agreement_counts[agreement] += 1
 
         hour_key = f"{hour:02d}:00"
         hourly_payload[hour_key] = {
             "lgbm": lgbm_probs,
             "hmm": hmm_probs,
             "table": table_probs,
+            "agreement": agreement,
             "top_place": top_place,
             "top_place_probability": float(top_prob),
             "expected_coordinates": {
@@ -197,16 +193,17 @@ def main() -> None:
             },
             "coordinate_uncertainty_meters": round(float(uncertainty_m), 2) if np.isfinite(uncertainty_m) else None,
         }
-        rows.append((hour_key, lgbm_top, lgbm_p, hmm_top, hmm_p, table_top, table_p))
+        rows.append((hour_key, lgbm_top, lgbm_p, table_top, table_p, agreement))
 
     print(f"Prediction for: {args.date} ({day_type})")
-    print("Hour | LightGBM | Prob | HMM | Prob | Table | Prob")
-    print("-----------------------------------------------------")
-    for hour_key, lgbm_top, lgbm_p, hmm_top, hmm_p, table_top, table_p in rows:
+    print("Hour | LightGBM | Prob | Table | Prob | Agreement")
+    print("--------------------------------------------------")
+    for hour_key, lgbm_top, lgbm_p, table_top, table_p, agreement in rows:
         print(
             f"{hour_key} | {lgbm_top:<9} | {format_pct(lgbm_p):>4} | "
-            f"{hmm_top:<9} | {format_pct(hmm_p):>4} | {table_top:<9} | {format_pct(table_p):>4}"
+            f"{table_top:<9} | {format_pct(table_p):>4} | {agreement}"
         )
+    print(f"\nAgreement summary: HIGH={agreement_counts['HIGH']} LOW={agreement_counts['LOW']}")
 
     out = {"date": args.date, "day_type": day_type, "hourly": hourly_payload}
     out_path = Path("outputs") / "predictions" / f"{args.date}.json"
